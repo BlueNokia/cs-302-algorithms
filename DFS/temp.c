@@ -3,14 +3,11 @@
 
 int **adMat , V;
 
-
-
 int main()
 {
-	int v;
+	
 	printf("Enter the no. of vertices : \n");
-	scanf("%d", &v);
-	V= v ;
+	scanf("%d", &V);
 	
 	printf("1 \n");
 	
@@ -31,7 +28,7 @@ int main()
 	printf("2 \n");
 		
 	FILE *fp ;
-	fp = fopen("dfsInput.txt", "r") ;
+	fp = fopen("inputDFS.txt", "r") ;
 	if( fp == NULL )
 	{
 		printf("No such file exists !! \n");
@@ -49,6 +46,14 @@ int main()
 		int k1 = ((int)temp1) - 65;
 		int k2 = ((int)temp2) - 65;
 		adMat[k1][k2] = 1;
+		
+		for(int i=0 ; i<V ; i++)
+		{
+			for(int j=0 ; j<V ; j++)
+				printf("\t %d", adMat[i][j]) ;
+			printf("\n");
+		
+		}
 	}
 	
 	printf("4 \n");
