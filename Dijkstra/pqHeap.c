@@ -1,5 +1,7 @@
+/*
 #include <stdio.h>
 #include <stdlib.h>
+*/
 
 #define parent(n) ((n-1)/2)
 #define lChild(n) (2*n + 1)
@@ -7,10 +9,26 @@
 
 typedef struct Heap
 {
-	unsigned int size ;
-	int *arr ;
-}heap ;
-
+	unsigned int size ;						// size of the Priority Queue
+	int *face, *arr, *idLock;					// arr :: the heap-array
+}heap ;									// face :: the face value of every vertex, e.g. - A, B, F, D
+									
+									
+void swap (heap *H, int i1, int i2)					// Swapping two nodes of the Heap
+{
+	int temp ;
+	temp = H->arr[i1];
+	H->arr[i1] = H->arr[i2] ;
+	H->arr[i2] = temp ;
+	
+	temp = H->face[i1];
+	H->face[i1] = H->face[i2] ;
+	H->face[i2] = temp ;
+	
+	H->idLock[H->face[i1]] = i1 ;
+	H->idLock[H->face[i2]] = i2 ;
+	
+}
 void minHeapify( heap *H, int low, int high )
 {
 	int smallest = low , temp; 
@@ -20,10 +38,7 @@ void minHeapify( heap *H, int low, int high )
 	
 	if(smallest != low)
 	{
-		temp = H->arr[smallest] ;
-		H->arr[smallest] = H->arr[low] ;
-		H->arr[low] = temp ;
-	
+		swap (H, smallest, low) ;
 		minHeapify( H, smallest, high);
 	}
 	
@@ -33,14 +48,17 @@ void push( heap *H, int new)
 {
 	H->size += 1;
 	H->arr = (int *)realloc(H->arr, H->size * sizeof(int));
+	H->face = (int *)realloc(H->face, H->size * sizeof(int));
+	
 	int index = H->size - 1, temp;
 	H->arr[index] = new;
+	H->face[index] = H->size - 1;
+	H->idLock[index] = H->size - 1; 
+	
 	while( index )
 	{
 		if(H->arr[parent(index)] <= H->arr[index])	break;
-		temp = H->arr[parent(index)];
-		H->arr[parent(index)] = H->arr[index];
-		H->arr[index] = temp;
+		swap (H, index, parent(index)) ;
 		index = parent(index) ;
 	}	
 	
@@ -48,14 +66,11 @@ void push( heap *H, int new)
 
 void changePriority ( heap *H, int index, int new_priority)
 {
-	int temp ;
 	H->arr[index] = new_priority ;
 	while( index )
 	{
 		if(H->arr[parent(index)] <= H->arr[index])	break;
-		temp = H->arr[parent(index)];
-		H->arr[parent(index)] = H->arr[index];
-		H->arr[index] = temp;
+		swap (H, index, parent(index)) ;
 		index = parent(index) ;
 	}
 }
@@ -68,15 +83,21 @@ int extractMin( heap *H )
 		return 0;
 	}
 	H->size -= 1;
-	int deleted = H->arr[0];
+	int deleted = H->face[0];
 	H->arr[0] = H->arr[H->size] ;
+	H->face[0] = H->face[H->size] ;
 	
 	H->arr = (int *)realloc( H->arr, H->size * sizeof(int)) ;
+	H->face = (int *)realloc( H->face, H->size * sizeof(int)) ;
 	
 	minHeapify( H, 0, H->size - 1);
 	return deleted ;
 }
 
+int getId (heap *H, int i)
+{
+	return H->idLock[i] ;
+}
 
 void printCurrentHeap( heap *H )
 {
@@ -90,8 +111,11 @@ void init_heap( heap *H )
 {
 	H->size = 0;
 	H->arr = (int *)malloc(H->size * sizeof(int)) ;
+	H->face = (int *)malloc(H->size * sizeof(int)) ;
+	H->idLock = (int *)malloc(H->size * sizeof(int)) ;
 }
 
+/*
 int main()
 {
 	heap *newH ;
@@ -107,6 +131,10 @@ int main()
 	printf("%d \n", extractMin( newH ));
 	changePriority(newH, 2, 40);
 	printCurrentHeap( newH );
+	changePriority(newH, 3, 10);
+	printCurrentHeap( newH );
+	changePriority(newH, 1, 60);
+	printCurrentHeap( newH );
 	printf("%d \n", extractMin( newH ));
 	printf("%d \n", extractMin( newH ));
 	printf("%d \n", extractMin( newH ));
@@ -116,6 +144,6 @@ int main()
 	return 0 ;
 }
 
-
+*/
 
 
