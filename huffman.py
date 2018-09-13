@@ -18,12 +18,12 @@ def huffman( frequency ):
 			
 		heapq.heappush(graph, [ a[0] + b[0] ] + a[1:] + b[1:] )
 		
-	return sorted( heapq.heappop(graph)[1:], key = lambda y : len(y[1]))
+	return sorted( heapq.heappop(graph)[1:], key = lambda y : frequency[y[0]], reverse = True)
 			
 	
 
 if __name__ == '__main__':
-	data = 'Samsung, Dell, Lenovo, any of them works for me'
+	data = 'Lenovo, Dell, Samsung, anything will do'
 	frequency = defaultdict(int)
 	
 	for word in data:
